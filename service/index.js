@@ -20,10 +20,15 @@ async function updateContact(id, value) {
   return Contacts.findByIdAndUpdate({ _id: id }, value);
 }
 
+async function updateStatusContact(id, value) {
+  return Contacts.updateOne({ _id: id }, { $set: { favorite: value } });
+}
+
 module.exports = {
   getAllContacts,
   getContactById,
   createContact,
   deleteContact,
   updateContact,
+  updateStatusContact,
 };
