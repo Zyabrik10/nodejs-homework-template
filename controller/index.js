@@ -108,15 +108,11 @@ async function updateOne(req, res) {
     const { contactId } = req.params;
     const contactsById = await getContactById(contactId);
 
-    if (contactsById) {
-      await updateStatusContact(contactId, favorite);
-      res.status(200).json({ ...contactsById._doc, favorite });
-    } else {
-      res.status(404).json({ message: "Not found" });
-    }
+    await updateStatusContact(contactId, favorite);
+    res.status(200).json({ ...contactsById._doc, favorite });
   } catch (e) {
     console.log(e.message);
-    res.status(400).json({ message: e.message });
+    res.status(404).json({ message: "Not Found" });
   }
 }
 
