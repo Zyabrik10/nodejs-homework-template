@@ -3,7 +3,7 @@ const validateFavoriteFieldScheme = require("./joiSchemas/validateFavoriteField"
 function validateFavoriteField(body) {
   try {
     if (Object.keys(body).length === 0)
-      return { isValid: false, message: "missing field", value: null };
+      return { isValid: false, message: "missing field favorite", value: null };
 
     const { value, error } = validateFavoriteFieldScheme.validate(body);
 
