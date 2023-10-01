@@ -5,14 +5,16 @@ const {
   updateContact,
   deleteContact,
   updateStatusContact,
-} = require("../service/");
+} = require("../service");
 
-const validateContactBody = require("../validation/validateContactBody");
-const validateFavoriteField = require("../validation/validateFavoritefield");
+const validContactBody = require("../validation/contactBody");
 
-async function get(_, res) {
+const validFavoriteField = require("../validation/favoriteField");
+
+async function get(req, res) {
   try {
-    const contacts = await getAllContacts();
+    const { page, limit, favorite } = req.query;
+    const contacts = await getAllContacts({ page, limit, favorite });
     res.status(200).json(contacts);
   } catch (e) {
     console.log(e.message);
@@ -37,7 +39,7 @@ async function getById(req, res) {
 
 async function create(req, res) {
   try {
-    const { isValid, value, message } = validateContactBody(req.body);
+    const { isValid, value, message } = validContactBody(req.body);
 
     if (!isValid) {
       res.status(400).json({ message });
@@ -74,7 +76,7 @@ async function deleteById(req, res) {
 
 async function update(req, res) {
   try {
-    const { isValid, value, message } = validateContactBody(req.body);
+    const { isValid, value, message } = validContactBody(req.body);
 
     if (!isValid) {
       res.status(400).json({ message });
@@ -98,7 +100,7 @@ async function update(req, res) {
 
 async function updateOne(req, res) {
   try {
-    const { isValid, favorite, message } = validateFavoriteField(req.body);
+    const { isValid, favorite, message } = validFavoriteField(req.body);
 
     if (!isValid) {
       res.status(400).json({ message });

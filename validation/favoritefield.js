@@ -1,4 +1,4 @@
-const validateFavoriteFieldScheme = require("./joiSchemas/validateFavoriteField");
+const validateFavoriteFieldScheme = require("./joiSchemas/favoriteField");
 
 function validateFavoriteField(body) {
   try {

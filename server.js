@@ -1,7 +1,6 @@
 const app = require("./app");
 
 const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
 
 // mongodb+srv://test-user:test-user-password@testdb.o96x5hf.mongodb.net/db-contacts
 const connection = mongoose.connect(process.env.DB_HOST, {

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
 
 const Schema = mongoose.Schema;
 const conatcts = new Schema(
@@ -17,6 +16,10 @@ const conatcts = new Schema(
     favorite: {
       type: Boolean,
       default: false,
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
     },
   },
   { versionKey: false }

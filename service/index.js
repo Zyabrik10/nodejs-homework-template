@@ -1,7 +1,13 @@
 const Contacts = require("./schemas/contacts");
 
-async function getAllContacts() {
-  return Contacts.find({});
+async function getAllContacts({ page, limit, favorite }) {
+  if (favorite)
+    return Contacts.find({ favorite: favorite })
+      .limit(limit)
+      .skip(page * limit);
+  return Contacts.find({})
+    .limit(limit)
+    .skip(page * limit);
 }
 
 async function getContactById(id) {

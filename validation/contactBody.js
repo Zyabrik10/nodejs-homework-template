@@ -1,11 +1,11 @@
-const validateContactBodyScheme = require("./joiSchemas/validateContactBody");
+const joiSchemeContactBody = require("./joiSchemas/contactBody");
 
 function validateContactBody(body) {
   try {
     if (Object.keys(body).length === 0)
       return { isValid: false, message: "missing fields", value: null };
 
-    const { value, error } = validateContactBodyScheme.validate(body);
+    const { value, error } = joiSchemeContactBody.validate(body);
 
     if (error) {
       const message = error.details[0].message;
