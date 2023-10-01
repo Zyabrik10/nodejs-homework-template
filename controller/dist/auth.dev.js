@@ -110,7 +110,7 @@ var logout = function logout(req, res) {
           }));
 
         case 2:
-          res.status(204);
+          res.status(204).json();
 
         case 3:
         case "end":

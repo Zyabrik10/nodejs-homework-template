@@ -49,7 +49,7 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   await User.findOneAndUpdate({ _id: req.user._id }, { token: "" });
-  res.status(204);
+  res.status(204).json();
 };
 
 const getCurrentUser = async (req, res) => {
