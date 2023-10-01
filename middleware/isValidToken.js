@@ -14,7 +14,7 @@ const isValidToken = async (req, res, next) => {
     const user = await User.findOne({ _id });
 
     if (!user || token !== user.token) {
-      throw new Error("Unauthorisized");
+      throw new Error();
     }
 
     req.user = user;

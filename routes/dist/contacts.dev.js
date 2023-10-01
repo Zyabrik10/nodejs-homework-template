@@ -8,6 +8,10 @@ var validErrorHandler = require("../middleware/validErrorHandler");
 
 var isValidId = require("../middleware/isValidId");
 
+var isValidToken = require("../middleware/isValidToken");
+
+var validTokenErrorHandler = require("../middleware/validTokenErrorHandler");
+
 var _require = require("../controller/contacts"),
     get = _require.get,
     getById = _require.getById,
@@ -16,6 +20,7 @@ var _require = require("../controller/contacts"),
     update = _require.update,
     updateOne = _require.updateOne;
 
+router.use(isValidToken, validTokenErrorHandler);
 router.get("/", get);
 router.get("/:contactId", isValidId, validErrorHandler, getById);
 router.post("/", create);

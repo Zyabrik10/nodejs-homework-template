@@ -6,6 +6,9 @@ const validErrorHandler = require("../middleware/validErrorHandler");
 
 const isValidId = require("../middleware/isValidId");
 
+const isValidToken = require("../middleware/isValidToken");
+const validTokenErrorHandler = require("../middleware/validTokenErrorHandler");
+
 const {
   get,
   getById,
@@ -14,6 +17,8 @@ const {
   update,
   updateOne,
 } = require("../controller/contacts");
+
+router.use(isValidToken, validTokenErrorHandler);
 
 router.get("/", get);
 

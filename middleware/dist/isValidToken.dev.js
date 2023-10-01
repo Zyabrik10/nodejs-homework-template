@@ -28,7 +28,7 @@ var isValidToken = function isValidToken(req, res, next) {
             break;
           }
 
-          throw new Error("Unauthorisized");
+          throw new Error();
 
         case 9:
           req.user = user;
