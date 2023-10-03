@@ -5,6 +5,7 @@ const User = require("../service/schemas/user");
 const signup = async (req, res) => {
   const { email, password } = req.body;
 
+  // create new user
   const newUser = new User({ email });
   const token = jwt.sign({ _id: newUser._id }, process.env.SECRET, {
     expiresIn: "1h",

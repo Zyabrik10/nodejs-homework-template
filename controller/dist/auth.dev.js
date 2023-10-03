@@ -11,7 +11,8 @@ var signup = function signup(req, res) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          _req$body = req.body, email = _req$body.email, password = _req$body.password;
+          _req$body = req.body, email = _req$body.email, password = _req$body.password; // create new user
+
           newUser = new User({
             email: email
           });

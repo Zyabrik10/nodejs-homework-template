@@ -9,10 +9,13 @@ var conatcts = new Schema({
     required: [true, "Set name for contact"]
   },
   email: {
-    type: String
+    type: String,
+    require: true,
+    unique: true
   },
   phone: {
-    type: String
+    type: String,
+    unique: true
   },
   favorite: {
     type: Boolean,
@@ -20,7 +23,8 @@ var conatcts = new Schema({
   },
   owner: {
     type: Schema.Types.ObjectId,
-    ref: "users"
+    ref: "users",
+    required: [true, "Contacts must have an owner"]
   }
 }, {
   versionKey: false
