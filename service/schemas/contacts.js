@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
 
 const Schema = mongoose.Schema;
 const conatcts = new Schema(
@@ -10,13 +9,21 @@ const conatcts = new Schema(
     },
     email: {
       type: String,
+      require: true,
+      unique: true,
     },
     phone: {
       type: String,
+      unique: true,
     },
     favorite: {
       type: Boolean,
       default: false,
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: [true, "Contacts must have an owner"],
     },
   },
   { versionKey: false }

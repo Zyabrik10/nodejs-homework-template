@@ -5,24 +5,32 @@ const {
   updateContact,
   deleteContact,
   updateStatusContact,
-} = require("../service/");
+} = require("../service");
 
-const validateContactBody = require("../validation/validateContactBody");
-const validateFavoriteField = require("../validation/validateFavoritefield");
+const validContactBody = require("../validation/contactBody");
 
-async function get(_, res) {
+const validFavoriteField = require("../validation/favoriteField");
+
+async function get(req, res) {
   try {
-    const contacts = await getAllContacts();
+    const { page, limit, favorite } = req.query;
+    const contacts = await getAllContacts(req.user._id, {
+      page: page - 1,
+      limit,
+      favorite,
+    });
     res.status(200).json(contacts);
   } catch (e) {
-    console.log(e.message);
     res.status(400).json({ message: e.message });
   }
 }
 
 async function getById(req, res) {
   try {
-    const contactsById = await getContactById(req.params.contactId);
+    const contactsById = await getContactById(
+      req.user._id,
+      req.params.contactId
+    );
 
     if (contactsById) {
       res.status(200).json(contactsById);
@@ -37,14 +45,14 @@ async function getById(req, res) {
 
 async function create(req, res) {
   try {
-    const { isValid, value, message } = validateContactBody(req.body);
+    const { isValid, value, message } = validContactBody(req.body);
 
     if (!isValid) {
       res.status(400).json({ message });
       return;
     }
 
-    const newContact = await createContact(value);
+    const newContact = await createContact(req.user._id, value);
 
     if (newContact) {
       res.status(201).json(newContact);
@@ -74,7 +82,7 @@ async function deleteById(req, res) {
 
 async function update(req, res) {
   try {
-    const { isValid, value, message } = validateContactBody(req.body);
+    const { isValid, value, message } = validContactBody(req.body);
 
     if (!isValid) {
       res.status(400).json({ message });
@@ -82,11 +90,15 @@ async function update(req, res) {
     }
 
     const { contactId } = req.params;
-    const contactsById = await getContactById(contactId);
+    const contactsById = await getContactById(req.user._id, contactId);
 
     if (contactsById) {
       const updatedContact = await updateContact(contactId, value);
-      res.status(200).json({ ...updatedContact._doc, ...value });
+      res.status(200).json({
+        _id: updatedContact._id,
+        owner: updatedContact.owner,
+        ...value,
+      });
     } else {
       res.status(404).json({ message: "Not found" });
     }
@@ -98,7 +110,7 @@ async function update(req, res) {
 
 async function updateOne(req, res) {
   try {
-    const { isValid, favorite, message } = validateFavoriteField(req.body);
+    const { isValid, favorite, message } = validFavoriteField(req.body);
 
     if (!isValid) {
       res.status(400).json({ message });
@@ -106,10 +118,25 @@ async function updateOne(req, res) {
     }
 
     const { contactId } = req.params;
-    const contactsById = await getContactById(contactId);
+    const contactById = await getContactById(req.user._id, contactId);
 
-    await updateStatusContact(contactId, favorite);
-    res.status(200).json({ ...contactsById._doc, favorite });
+    if (contactById) {
+      const { email, name, phone, _id, owner } = await updateStatusContact(
+        contactId,
+        favorite
+      );
+
+      res.status(200).json({
+        _id,
+        owner,
+        email,
+        name,
+        phone,
+        favorite,
+      });
+    } else {
+      res.status(400).json({ message: "Such contact doesn't exist" });
+    }
   } catch (e) {
     console.log(e.message);
     res.status(404).json({ message: "Not Found" });

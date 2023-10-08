@@ -2,8 +2,12 @@ const express = require("express");
 
 const router = express.Router();
 
-const isValidId = require("../middleware/isValid");
 const validErrorHandler = require("../middleware/validErrorHandler");
+
+const isValidId = require("../middleware/isValidId");
+
+const isValidToken = require("../middleware/isValidToken");
+const validTokenErrorHandler = require("../middleware/validTokenErrorHandler");
 
 const {
   get,
@@ -12,7 +16,9 @@ const {
   deleteById,
   update,
   updateOne,
-} = require("../controller");
+} = require("../controller/contacts");
+
+router.use(isValidToken, validTokenErrorHandler);
 
 router.get("/", get);
 

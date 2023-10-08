@@ -1,5 +1,3 @@
-module.exports = (error, req, res, next) => {
-  res
-    .status(404)
-    .json({ messager: error.message.split("Error:").join(" ").trim() });
+module.exports = (error, _, res, next) => {
+  res.status(error.status).json({ message: error.message });
 };
