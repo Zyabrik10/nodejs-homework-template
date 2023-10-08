@@ -9,15 +9,12 @@ const validTokenErrorHandler = require("../middleware/validTokenErrorHandler");
 
 const validSubscription = require("../validation/subscription");
 
-const updateAvatarMulter = require("../config/config-multer");
-
 const {
   signup,
   login,
   logout,
   getCurrentUser,
   updateSubscription,
-  updateAvatar,
 } = require("../controller/auth");
 
 router.post("/register", isValidAuthSignUp, validErrorHandler, signup);
@@ -33,7 +30,5 @@ router.patch(
   validErrorHandler,
   updateSubscription
 );
-
-router.patch("/avatars", updateAvatarMulter.single("avatar"), updateAvatar);
 
 module.exports = router;
