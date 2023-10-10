@@ -11,6 +11,8 @@ const validSubscription = require("../validation/subscription");
 
 const updateAvatarMulter = require("../config/config-multer");
 
+const validUpdateAvatar = require("../validation/updateAvatar");
+
 const {
   signup,
   login,
@@ -34,6 +36,13 @@ router.patch(
   updateSubscription
 );
 
-router.patch("/avatars", updateAvatarMulter.single("avatar"), updateAvatar);
+router.patch(
+  "/avatars",
+  updateAvatarMulter.single("avatar"),
+  validErrorHandler,
+  validUpdateAvatar,
+  validErrorHandler,
+  updateAvatar
+);
 
 module.exports = router;
