@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 
+const Jimp = require("jimp");
+const fs = require("fs").promises;
+
 const User = require("../service/schemas/user");
 
 const signup = async (req, res) => {
@@ -13,6 +16,8 @@ const signup = async (req, res) => {
 
   newUser.setPassword(password);
   newUser.token = token;
+
+  newUser.generateAvatar();
 
   await newUser.save();
 
@@ -69,10 +74,46 @@ const updateSubscription = async (req, res) => {
   res.status(201).json({ email, subscription });
 };
 
+const updateAvatar = async (req, res) => {
+  const { filename } = req.file;
+
+  const files = await fs.readdir("public/avatars");
+
+  files.forEach((file) => {
+    if (file.split("-")[0] === filename.split("-")[0]) {
+      fs.unlink(`public/avatars/${file}`);
+    }
+  });
+
+  const temporaryURL = `public/tmp/${filename}`;
+  const permanentURL = `public/avatars/${filename}`;
+
+  const globalURL = `/avatars/${filename}`;
+
+  Jimp.read(temporaryURL)
+    .then((lenna) => {
+      return lenna
+        .resize(250, 250) // resize
+        .write(permanentURL); // save
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
+  await fs.unlink(temporaryURL);
+
+  await User.findOneAndUpdate({ _id: req.user._id }, { avatarURL: globalURL });
+
+  res.status(200).json({
+    avatarURL: globalURL,
+  });
+};
+
 module.exports = {
   signup,
   login,
   logout,
   getCurrentUser,
   updateSubscription,
+  updateAvatar,
 };
