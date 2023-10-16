@@ -20,10 +20,29 @@ const {
   getCurrentUser,
   updateSubscription,
   updateAvatar,
+  confirmEmailUser,
+  verifyEmail,
 } = require("../controller/auth");
+
+const verifyToken = require("../middleware/verifyEmailToken");
+const validateEmailVerificationField = require("../validation/emailVerification");
 
 router.post("/register", isValidAuthSignUp, validErrorHandler, signup);
 router.post("/login", isValidAuthLogIn, validErrorHandler, login);
+
+router.post(
+  "/verify",
+  validateEmailVerificationField,
+  validErrorHandler,
+  verifyEmail
+);
+
+router.post(
+  "/verify/:verificationToken",
+  verifyToken,
+  validErrorHandler,
+  confirmEmailUser
+);
 
 router.use(isValidToken, validTokenErrorHandler);
 
