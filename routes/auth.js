@@ -37,7 +37,7 @@ router.post(
   verifyEmail
 );
 
-router.post(
+router.get(
   "/verify/:verificationToken",
   verifyToken,
   validErrorHandler,

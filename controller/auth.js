@@ -75,6 +75,9 @@ const login = async (req, res) => {
 
   const user = await User.findOne({ email: bodyEmail });
 
+  if (!user.verify)
+    return res.status(400).json({ message: "Must verify email" });
+
   if (!user || !user.validPassword(bodyPassword)) {
     return res.status(400).json({ message: "Incorrect login or password" });
   }
