@@ -4,6 +4,8 @@ const crypto = require("crypto");
 
 const Schema = mongoose.Schema;
 
+const transporter = require("../../config/config-email");
+
 const userSchema = new Schema(
   {
     password: {
@@ -22,6 +24,11 @@ const userSchema = new Schema(
     },
     token: String,
     avatarURL: String,
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: String,
   },
   { versionKey: false }
 );
@@ -32,6 +39,21 @@ userSchema.methods.setPassword = function (password) {
 
 userSchema.methods.validPassword = function (password) {
   return bCrypt.compareSync(password, this.password);
+};
+
+userSchema.methods.setVerificationToken = function (verificationToken, email) {
+  const emailOptions = {
+    from: "api.test.mazurok@meta.ua",
+    to: email,
+    subject: "Nodemailer test",
+    html: `<a href="localhost:3000/users/verify/${verificationToken}">localhost:3000/users/verify/${verificationToken}</a>`,
+  };
+
+  this.verificationToken = verificationToken;
+
+  transporter.sendMail(emailOptions).then(console.log).catch(console.log);
+
+  return verificationToken;
 };
 
 userSchema.methods.generateAvatar = function (email) {

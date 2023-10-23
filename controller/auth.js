@@ -14,10 +14,15 @@ const signup = async (req, res) => {
     expiresIn: "1h",
   });
 
+  const verificationToken = jwt.sign({ _id: newUser._id }, process.env.SECRET, {
+    expiresIn: "1h",
+  });
+
   newUser.setPassword(password);
   newUser.token = token;
 
   newUser.generateAvatar();
+  newUser.setVerificationToken(verificationToken, email);
 
   await newUser.save();
 
@@ -29,10 +34,49 @@ const signup = async (req, res) => {
   });
 };
 
+const confirmEmailUser = async (req, res) => {
+  const user = await User.findOne({ _id: req.user._id });
+
+  user.verify = true;
+  user.verificationToken = "";
+
+  await user.save();
+
+  res.status(200).json({
+    message: "Verification successful",
+  });
+};
+
+async function verifyEmail(req, res) {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) return res.status(400).json();
+
+  if (user.verify)
+    return res
+      .status(400)
+      .json({ message: "Verification has already been passed" });
+
+  const verificationToken = jwt.sign({ _id: user._id }, process.env.SECRET, {
+    expiresIn: "1h",
+  });
+
+  user.setVerificationToken(verificationToken, email);
+
+  await user.save();
+
+  res.status(200).json({ message: "Verification email sent" });
+}
+
 const login = async (req, res) => {
   const { password: bodyPassword, email: bodyEmail } = req.body;
 
   const user = await User.findOne({ email: bodyEmail });
+
+  if (!user.verify)
+    return res.status(400).json({ message: "Must verify email" });
 
   if (!user || !user.validPassword(bodyPassword)) {
     return res.status(400).json({ message: "Incorrect login or password" });
@@ -116,4 +160,6 @@ module.exports = {
   getCurrentUser,
   updateSubscription,
   updateAvatar,
+  confirmEmailUser,
+  verifyEmail,
 };
